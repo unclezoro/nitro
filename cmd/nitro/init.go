@@ -24,7 +24,6 @@ import (
 
 	"github.com/cavaliergopher/grab/v3"
 	"github.com/codeclysm/extract/v3"
-
 	"github.com/ethereum/go-ethereum/common"
 	"github.com/ethereum/go-ethereum/core"
 	"github.com/ethereum/go-ethereum/core/rawdb"
@@ -574,6 +573,7 @@ func openInitializeChainDb(ctx context.Context, stack *node.Node, config *NodeCo
 	if !config.Init.Force {
 		if readOnlyDb, err := stack.OpenDatabaseWithFreezerWithExtraOptions("l2chaindata", 0, 0, config.Persistent.Ancient, "l2chaindata/", true, persistentConfig.Pebble.ExtraOptions("l2chaindata")); err == nil {
 			if chainConfig := gethexec.TryReadStoredChainConfig(readOnlyDb); chainConfig != nil {
+
 				readOnlyDb.Close()
 				if !arbmath.BigEquals(chainConfig.ChainID, chainId) {
 					return nil, nil, fmt.Errorf("database has chain ID %v but config has chain ID %v (are you sure this database is for the right chain?)", chainConfig.ChainID, chainId)
@@ -630,6 +630,7 @@ func openInitializeChainDb(ctx context.Context, stack *node.Node, config *NodeCo
 	// Check if database was misplaced in parent dir
 	const errorFmt = "database was not found in %s, but it was found in %s (have you placed the database in the wrong directory?)"
 	parentDir := filepath.Dir(stack.InstanceDir())
+
 	if dirExists(path.Join(parentDir, "l2chaindata")) {
 		return nil, nil, fmt.Errorf(errorFmt, stack.InstanceDir(), parentDir)
 	}
